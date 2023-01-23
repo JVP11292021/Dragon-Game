@@ -32,7 +32,9 @@
 *.app
 
 # files
-*/.vs
+/.vs
 *.filters
 *.vcxproj
 *.user
+/Debug
+/__vm
