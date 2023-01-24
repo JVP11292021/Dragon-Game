@@ -1,18 +1,16 @@
 #include "player.h"
 
 namespace arduino {
-	Player::Player(const LedControl& control, const pcons& pos) {
+	Player::Player(LedControl& control, const pcons& pos) {
 		this->pos = pos;
-		this->control = control;
-		this->control.setIntensity(0, 15);
-		this->control.setLed(0, pos[0], pos[1], true);
+		control.setIntensity(0, 15);
+		control.setLed(0, pos[0], pos[1], true);
 	}
 
-	Player::Player(const LedControl& control, int16 x, int16 y) {
+	Player::Player(LedControl& control, int16 x, int16 y) {
 		this->pos = { x, y };
-		this->control = control;
-		this->control.setIntensity(0, 15);
-		this->control.setLed(0, x, y, true);
+		control.setIntensity(0, 15);
+		control.setLed(0, x, y, true);
 	}
 
 	bool Player::isHit(int16 x, int16 y) {
@@ -24,7 +22,8 @@ namespace arduino {
 		return false;
 	}
 
-	void Player::move(const Movements& direction) {
+	void Player::move(LedControl& control, const Movements& direction) {
+		control.setLed(0, this->pos[0], this->pos[1], false);
 		switch (direction) {
 			case Movements::UP:
 				this->pos.x++;
@@ -33,7 +32,6 @@ namespace arduino {
 				this->pos.x--;
 				break;
 		}
-
-		this->control.setLed(0, 0, this->pos[1], true);
+		control.setLed(0, this->pos[0], this->pos[1], true);
 	}
 }

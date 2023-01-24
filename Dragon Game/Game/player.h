@@ -34,19 +34,18 @@ namespace arduino {
 	class Player {
 	private:
 		pcons pos;
-		LedControl control;
 		bool hit = false;
 
 	public:
-		Player(const LedControl&, const pcons&);
-		Player(const LedControl&, int16, int16);
+		Player(LedControl&, const pcons&);
+		Player(LedControl&, int16, int16);
 
 		bool isHit(int16, int16);
 
-		void setPos(const pcons& pos) { this->pos = pos; this->control.setDigit(0, pos[0], pos[1], true); }
-		void set() { this->control.setDigit(0, pos[0], pos[1], true); }
+		void setPos(LedControl& control, const pcons& pos) { this->pos = pos; control.setLed(0, pos[0], pos[1], true); }
+		void set(LedControl& control) { control.setLed(0, pos[0], pos[1], true); }
 
-		void move(const Movements&);
+		void move(LedControl&, const Movements&);
 	};
 }
 
