@@ -23,9 +23,11 @@ const int AANT = 1;
 //const int buttonPin = 2;
 //int buttonState = 0;
 
-bool isHitFlag = false;
+bool isHitFlag = FALSE;
+bool isMovedFlag = FALSE;
 
 LedControl matrix = LedControl(DIN, CLK, CS, AANT);
+arduino::Player player = arduino::Player(matrix, { 3, 0 });;
 
 void randomSizedFireball(int sizeX, int sizeY);
 bool randomFireball(arduino::Player& player);
@@ -36,15 +38,14 @@ void setup() {
     matrix.shutdown(0, false);
     matrix.setIntensity(0, 8);
     matrix.clearDisplay(0);
-
+    player.set(matrix);
     pinMode(2, INPUT);
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
     //buttonState = digitalRead(buttonPin);
-    arduino::Player player = arduino::Player(matrix, { 3, 0 });
-    if (isHitFlag == false) {
+    if (isHitFlag == FALSE) {
         if (randomFireball(player))
             //lost();
             Serial.print("Lost");
@@ -88,8 +89,10 @@ bool randomFireball(arduino::Player& player) {
     player.set(matrix);
     for (int i = 7; i >= 0; i--) {
         matrix.setLed(0, r, i, TRUE);
-        if (btn.isPressed())
+        if (btn.isPressed() && isMovedFlag == FALSE) {
             player.move(matrix, arduino::Movements::UP);
+            isMovedFlag = TRUE;
+        }
         // code
         delay(100);
         matrix.setLed(0, r, i, FALSE);
@@ -100,6 +103,7 @@ bool randomFireball(arduino::Player& player) {
         }
     }
     player.set(matrix);
+    isMovedFlag = FALSE;
 
     return FALSE;
 }

@@ -7,8 +7,8 @@ namespace arduino{
 
 	class Button {
 	private:
-		int16 state;
-		int16 pin;
+		int16 state = 0;
+		int16 pin = 0;
 		int16 counter;
 
 	public:

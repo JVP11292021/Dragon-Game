@@ -39,10 +39,16 @@ namespace arduino {
 	public:
 		Player(LedControl&, const pcons&);
 		Player(LedControl&, int16, int16);
+		Player(const Player&);
 
 		bool isHit(int16, int16);
 
-		void setPos(LedControl& control, const pcons& pos) { this->pos = pos; control.setLed(0, pos[0], pos[1], true); }
+		void setPos(LedControl& control, const pcons& pos) { 
+			this->pos = pos;
+			if (this->pos[0] <=7 && this->pos[1] <= 7)
+				control.setLed(0, pos[0], pos[1], true); 
+		}
+
 		void set(LedControl& control) { control.setLed(0, pos[0], pos[1], true); }
 
 		void move(LedControl&, const Movements&);

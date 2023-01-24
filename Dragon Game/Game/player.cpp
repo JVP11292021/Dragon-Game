@@ -13,6 +13,12 @@ namespace arduino {
 		control.setLed(0, x, y, true);
 	}
 
+	Player::Player(const Player& player) {
+		this->pos = player.pos;
+		this->hit = player.hit;
+	}
+
+
 	bool Player::isHit(int16 x, int16 y) {
 		if (x == this->pos[0] && y == this->pos[1]) {
 			this->hit = true;
@@ -23,15 +29,17 @@ namespace arduino {
 	}
 
 	void Player::move(LedControl& control, const Movements& direction) {
-		control.setLed(0, this->pos[0], this->pos[1], false);
-		switch (direction) {
-			case Movements::UP:
-				this->pos.x++;
-				break;
-			case Movements::DOWN:
-				this->pos.x--;
-				break;
+		if (this->pos[0] <= 7 && this->pos[1] <= 7) {
+			control.setLed(0, this->pos[0], this->pos[1], false);
+			switch (direction) {
+				case Movements::UP:
+					this->pos.x++;
+					break;
+				case Movements::DOWN:
+					this->pos.x--;
+					break;
+			}
+			control.setLed(0, this->pos[0], this->pos[1], true);
 		}
-		control.setLed(0, this->pos[0], this->pos[1], true);
 	}
 }
