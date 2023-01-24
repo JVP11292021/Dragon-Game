@@ -10,6 +10,7 @@
 #include "player.h"
 #include "libraries.h"
 #include "LedControl.h"
+#include "ezButton.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -19,12 +20,23 @@ const int CS = 9;
 const int CLK = 10;
 const int AANT = 1;
 
-int buttonState = 0;
+#define VRX_PIN  A0 // Arduino pin connected to VRX pin
+#define VRY_PIN  A1 // Arduino pin connected to VRY pin
+#define SW_PIN   2  // Arduino pin connected to SW  pin
 
+
+int xValue = 0; // To store value of the X axis
+int yValue = 0; // To store value of the Y axis
+int bValue = 0; // To store value of the button
+
+bool isHitFlag = false;
+
+ezButton button = ezButton(SW_PIN);
 LedControl matrix = LedControl(DIN, CLK, CS, AANT);
+LedControl playerControl = LedControl(DIN, CLK, CS, AANT);
 
 void randomSizedFireball(int sizeX, int sizeY);
-void randomFireball(arduino::Player& player);
+bool randomFireball(arduino::Player& player);
 void lost();
 
 // the setup function runs once when you press reset or power the board
@@ -33,18 +45,48 @@ void setup() {
     matrix.setIntensity(0, 8);
     matrix.clearDisplay(0);
 
-    arduino::pin_i(GPIO_0);
-    arduino::pin_i(GPIO_1);
+    button.setDebounceTime(50);
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-    buttonState = digitalRead(GPIO_0);
-    if (buttonState == HIGH)
-        Serial.print("Hello");
-    arduino::Player player = arduino::Player(matrix, { 4, 0 });
-    randomFireball(player);
-    delay(300);
+    button.loop(); // MUST call the loop() function first
+
+// read analog X and Y analog values
+    xValue = analogRead(VRX_PIN);
+    yValue = analogRead(VRY_PIN);
+
+    // Read the button value
+    bValue = button.getState();
+
+    if (button.isPressed()) {
+        Serial.println("The button is pressed");
+        // TODO do something here
+    }
+
+    if (button.isReleased()) {
+        Serial.println("The button is released");
+        // TODO do something here
+    }
+
+
+    arduino::Player player = arduino::Player(playerControl, { 3, 0 });
+    if (isHitFlag == false) {
+        if (randomFireball(player))
+            lost();
+    }
+    
+    delay(100);
+}
+
+void _HWDEBUG() {
+    // print data to Serial Monitor on Arduino IDE
+    Serial.print("x = ");
+    Serial.print(xValue);
+    Serial.print(", y = ");
+    Serial.print(yValue);
+    Serial.print(" : button = ");
+    Serial.println(bValue);
 }
 
 void randomSizedFireball(int sizeX, int sizeY) {
@@ -65,24 +107,27 @@ void randomSizedFireball(int sizeX, int sizeY) {
 }
 
 void lost() {
-    matrix.setChar(0, 0, 'L', TRUE);
     matrix.clearDisplay(0);
+    matrix.setChar(0, 0, 'L', TRUE);
 }
 
-void randomFireball(arduino::Player& player) {
+bool randomFireball(arduino::Player& player) {
     int min = 0;
     int max = 7;
     int range = max - min + 1;
     int r = (rand() % range);
+ 
     for (int i = 7; i >= 0; i--) {
         matrix.setLed(0, r, i, TRUE);
-        delay(100);
-        matrix.setLed(0, r, i, FALSE);
-
+        
         if (player.isHit(r, i)) {
-            break;
-            lost();
+            isHitFlag = true;
+            return TRUE;
         }
     }
+    delay(300);
+    for (int i = 7; i >= 0; i--)
+        matrix.setLed(0, r, i, FALSE);
+    return FALSE;
 }
 

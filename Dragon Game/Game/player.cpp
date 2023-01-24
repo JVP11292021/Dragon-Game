@@ -12,12 +12,15 @@ namespace arduino {
 		this->pos = { x, y };
 		this->control = control;
 		this->control.setIntensity(0, 15);
-		this->control.setLed(1, x, y, true);
+		this->control.setLed(0, x, y, true);
 	}
 
 	bool Player::isHit(int16 x, int16 y) {
-		if (x == this->pos[0] && y == this->pos[1])
+		if (x == this->pos[0] && y == this->pos[1]) {
+			this->hit = true;
 			return true;
+		}
+		this->hit = false;
 		return false;
 	}
 

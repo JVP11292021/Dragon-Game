@@ -35,6 +35,7 @@ namespace arduino {
 	private:
 		pcons pos;
 		LedControl control;
+		bool hit = false;
 
 	public:
 		Player(const LedControl&, const pcons&);
@@ -42,7 +43,8 @@ namespace arduino {
 
 		bool isHit(int16, int16);
 
-		void setPos(const pcons& pos) { this->pos = pos; this->control.setDigit(0, 0, pos[1], true); }
+		void setPos(const pcons& pos) { this->pos = pos; this->control.setDigit(0, pos[0], pos[1], true); }
+		void set() { this->control.setDigit(0, pos[0], pos[1], true); }
 
 		void move(const Movements&);
 	};
