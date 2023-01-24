@@ -17,7 +17,7 @@
 #define GPIO_13		13
 
 
-namespace uno {
+namespace arduino {
 
 	const int PD_RX_0 = 0;
 	const int PD_TX_1 = 1;

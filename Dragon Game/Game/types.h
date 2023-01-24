@@ -1,7 +1,7 @@
-#ifndef __UNO_TYPES__
-#define __UNO_TYPES__
+#ifndef __TYPES__
+#define __TYPES__
 
-namespace uno {
+namespace arduino {
 	typedef short				f16;
 	typedef float				f32;
 	typedef double				f64;

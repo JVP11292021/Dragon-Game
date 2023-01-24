@@ -1,6 +1,6 @@
 #include "pins.h"
 
-namespace uno {
+namespace arduino {
 	void pin_i(uint8 pin) {
 		pinMode(pin, INPUT);
 	}
