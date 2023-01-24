@@ -33,8 +33,6 @@
 
 # files
 /.vs
-*.filters
-*.vcxproj
-*.user
+
 /Debug
 /__vm
