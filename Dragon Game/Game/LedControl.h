@@ -77,6 +77,8 @@ class LedControl {
         int maxDevices;
 
     public:
+        LedControl() {}
+
         /* 
          * Create a new controler 
          * Params :

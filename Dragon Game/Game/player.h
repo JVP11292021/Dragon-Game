@@ -2,6 +2,7 @@
 #define __GAME_PLAYER__
 
 #include "types.h"
+#include "LedControl.h"
 
 namespace arduino {
 
@@ -11,14 +12,20 @@ namespace arduino {
 		T x;
 		T y;
 
-		const T operator [](int32 index) const {
+		T operator [](int32 index) const {
 			if (index == 0)
 				return x;
 			else if (index == 1)
 				return y;
 			else
-				return -3299320;
+				return NULL;
 		}
+	};
+
+	enum class Movements {
+		NONE = -1,
+		UP, DOWN,
+		LEFT, RIGHT
 	};
 
 	typedef _PCONSTRUCT<int32> pconi;
@@ -27,14 +34,17 @@ namespace arduino {
 	class Player {
 	private:
 		pcons pos;
+		LedControl control;
 
 	public:
-		Player(const pcons&);
-		Player(int16, int16);
+		Player(const LedControl&, const pcons&);
+		Player(const LedControl&, int16, int16);
 
 		bool isHit(int16, int16);
 
-		void setPos(const pcons& pos) { this->pos = pos; }
+		void setPos(const pcons& pos) { this->pos = pos; this->control.setDigit(0, 0, pos[1], true); }
+
+		void move(const Movements&);
 	};
 }
 
