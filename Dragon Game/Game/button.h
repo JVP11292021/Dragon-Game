@@ -2,6 +2,7 @@
 #define __BUTTON__
 
 #include "types.h"
+#include "player.h"
 
 namespace arduino{
 
@@ -10,9 +11,10 @@ namespace arduino{
 		int16 state = 0;
 		int16 pin = 0;
 		int16 counter;
+		Movements movements;
 
 	public:
-		Button(int16 pin, int16 counter = 3);
+		Button(int16 pin, const Movements& movements, int16 counter = 3);
 		bool isPressed();
 
 		inline void add() { if (counter + 1 < 7) this->counter++; }
@@ -21,6 +23,7 @@ namespace arduino{
 		inline int16 getState() { return state; }
 		inline int16 getPin() { return pin; }
 		inline int16 getCounter() { return counter; }
+		inline Movements getMovement() { return this->movements; }
 
 		inline void setState(int16 state) { this->state = state; }
 

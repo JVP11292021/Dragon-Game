@@ -15,6 +15,9 @@
 #define TRUE 1
 #define FALSE 0
 
+#define M_UP arduino::Movements::UP
+#define M_DOWN  arduino::Movements::DOWN
+
 const int DIN = 8;
 const int CS = 9;
 const int CLK = 10;
@@ -32,6 +35,7 @@ arduino::Player player = arduino::Player(matrix, { 3, 0 });;
 void randomSizedFireball(int sizeX, int sizeY);
 bool randomFireball(arduino::Player& player);
 void lost();
+void readInput(arduino::Button& btn);
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -40,6 +44,7 @@ void setup() {
     matrix.clearDisplay(0);
     player.set(matrix);
     pinMode(2, INPUT);
+    pinMode(3, INPUT);
 }
 
 // the loop function runs over and over again until power down or reset
@@ -53,7 +58,7 @@ void loop() {
     
     //Serial.println(buttonState);
     
-    delay(100);
+    //delay(100);
 }
 
 void randomSizedFireball(int sizeX, int sizeY) {
@@ -78,22 +83,28 @@ void lost() {
     matrix.setChar(7, 0, 'L', TRUE);
 }
 
+void readInput(arduino::Button& btn) {
+    if (btn.isPressed() && isMovedFlag == FALSE) {
+        player.move(matrix, btn.getMovement());
+        isMovedFlag = TRUE;
+    }
+}
+
+
 bool randomFireball(arduino::Player& player) {
     int min = 0;
     int max = 7;
     int range = max - min + 1;
     int r = (rand() % range);
 
-    arduino::Button btn(2);
+    arduino::Button btnUp(2, M_UP);
+    arduino::Button btnDown(3, M_DOWN);
 
     player.set(matrix);
     for (int i = 7; i >= 0; i--) {
+        readInput(btnUp);
+        readInput(btnDown);
         matrix.setLed(0, r, i, TRUE);
-        if (btn.isPressed() && isMovedFlag == FALSE) {
-            player.move(matrix, arduino::Movements::UP);
-            isMovedFlag = TRUE;
-        }
-        // code
         delay(100);
         matrix.setLed(0, r, i, FALSE);
 
