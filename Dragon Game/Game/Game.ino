@@ -4,6 +4,7 @@
  Author:	jessy
 */
 
+#include "Sound.h"
 #include "GPIO.h"
 #include "pins.h"
 #include "types.h"
@@ -11,6 +12,8 @@
 #include "libraries.h"
 #include "LedControl.h"
 #include "button.h"
+#include "Servo.h"
+#include "sound.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -23,42 +26,55 @@ const int CS = 9;
 const int CLK = 10;
 const int AANT = 1;
 
-//const int buttonPin = 2;
-//int buttonState = 0;
+const int servoPin = 11;
 
 bool isHitFlag = FALSE;
 bool isMovedFlag = FALSE;
+bool winFlag = FALSE;
 
 LedControl matrix = LedControl(DIN, CLK, CS, AANT);
 arduino::Player player = arduino::Player(matrix, { 3, 0 });;
+Servo lock;
+
+arduino::Button btnUp(3, M_UP);
+arduino::Button btnDown(2, M_DOWN);
 
 void randomSizedFireball(int sizeX, int sizeY);
 bool randomFireball(arduino::Player& player);
 void lost();
+void win();
 void readInput(arduino::Button& btn);
 
 // the setup function runs once when you press reset or power the board
 void setup() {
+    Serial.begin(9600);
     matrix.shutdown(0, false);
     matrix.setIntensity(0, 8);
     matrix.clearDisplay(0);
     player.set(matrix);
+
     pinMode(2, INPUT);
     pinMode(3, INPUT);
+    lock.attach(servoPin);
+
+    // Servo begin position
+    lock.write(0);
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-    //buttonState = digitalRead(buttonPin);
-    if (isHitFlag == FALSE) {
-        if (randomFireball(player))
-            //lost();
-            Serial.print("Lost");
+
+    if (isHitFlag == FALSE && winFlag == FALSE) {
+        if (millis() >= 10000) {
+            lock.write(150);
+            win();
+            winFlag = TRUE;
+            arduino::play();
+        }
+        else if (randomFireball(player) && !winFlag) 
+            lost();
+        
     }
-    
-    //Serial.println(buttonState);
-    
-    //delay(100);
 }
 
 void randomSizedFireball(int sizeX, int sizeY) {
@@ -79,8 +95,19 @@ void randomSizedFireball(int sizeX, int sizeY) {
 }
 
 void lost() {
+    byte l_letter[8] = { B00000110,B00000110,B00000110,B00000110,B00000110,B00000110,B01111110,B01111110 };
+
     matrix.clearDisplay(0);
-    matrix.setChar(7, 0, 'L', TRUE);
+    for (int i = 0; i < 8; i++) 
+        matrix.setColumn(0, i, l_letter[i]);
+}
+
+void win() {
+    byte w_letter[8] = { B11000011,B11000011,B11011011,B11011011,B11011011,B11011011,B11111111,B01100110 };
+
+    matrix.clearDisplay(0);
+    for (int i = 0; i < 8; i++)
+        matrix.setColumn(0, i, w_letter[i]);
 }
 
 void readInput(arduino::Button& btn) {
@@ -92,18 +119,21 @@ void readInput(arduino::Button& btn) {
 
 
 bool randomFireball(arduino::Player& player) {
+    //srand(time(NULL));
     int min = 0;
     int max = 7;
     int range = max - min + 1;
     int r = (rand() % range);
 
-    arduino::Button btnUp(2, M_UP);
-    arduino::Button btnDown(3, M_DOWN);
-
     player.set(matrix);
     for (int i = 7; i >= 0; i--) {
+
+        btnUp.read();
+        btnDown.read();
+
         readInput(btnUp);
         readInput(btnDown);
+
         matrix.setLed(0, r, i, TRUE);
         delay(100);
         matrix.setLed(0, r, i, FALSE);

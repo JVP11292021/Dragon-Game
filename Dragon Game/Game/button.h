@@ -16,6 +16,7 @@ namespace arduino{
 	public:
 		Button(int16 pin, const Movements& movements, int16 counter = 3);
 		bool isPressed();
+		void read();
 
 		inline void add() { if (counter + 1 < 7) this->counter++; }
 		inline void sub() { if (counter - 1 > 0) this->counter--; }

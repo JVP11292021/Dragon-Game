@@ -29,7 +29,7 @@ namespace arduino {
 	}
 
 	void Player::move(LedControl& control, const Movements& direction) {
-		if (this->pos[0] <= 7 && this->pos[1] <= 7) {
+		if (this->pos[0] < 7 && this->pos[0] > 0) {
 			control.setLed(0, this->pos[0], this->pos[1], false);
 			switch (direction) {
 				case Movements::UP:
@@ -39,6 +39,14 @@ namespace arduino {
 					this->pos.x--;
 					break;
 			}
+			control.setLed(0, this->pos[0], this->pos[1], true);
+		}
+		else {
+			control.setLed(0, this->pos[0], this->pos[1], false);
+			if (this->pos[0] == 7 && direction == Movements::DOWN) 
+				this->pos.x--;
+			else if (this->pos[0] == 0 && direction == Movements::UP)
+				this->pos.x++;
 			control.setLed(0, this->pos[0], this->pos[1], true);
 		}
 	}

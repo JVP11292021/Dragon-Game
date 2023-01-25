@@ -3,7 +3,7 @@
 
 namespace arduino {
 	Button::Button(int16 pin, const Movements& movements, int16 counter) {
-		this->state = digitalRead(pin);
+		this->state = 0;
 		this->pin = pin;
 		this->counter = counter;
 		this->movements = movements;
@@ -13,5 +13,16 @@ namespace arduino {
 		if (this->state)
 			return true;
 		return false;
+	}
+
+	void Button::read() {
+		this->state = digitalRead(this->pin);
+		/*
+		Serial.print("Btn: ");
+		Serial.print(this->pin);
+		Serial.print(" ");
+		Serial.print(this->state);
+		Serial.println();
+		*/
 	}
 }
