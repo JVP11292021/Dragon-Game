@@ -9,7 +9,10 @@
 	#include "WProgram.h"
 #endif
 namespace  arduino{
-	void play();
+	void playWii();
+	void playWin();
+	void playLose();
+	void playFireball();
 }
 #endif
 
