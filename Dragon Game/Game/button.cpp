@@ -17,12 +17,5 @@ namespace arduino {
 
 	void Button::read() {
 		this->state = digitalRead(this->pin);
-		/*
-		Serial.print("Btn: ");
-		Serial.print(this->pin);
-		Serial.print(" ");
-		Serial.print(this->state);
-		Serial.println();
-		*/
 	}
 }

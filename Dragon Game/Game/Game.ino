@@ -63,9 +63,30 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
+    if (millis() < 3100 && millis() > 1000) {
+        byte number_1[8] = {B00111000,B01111000,B00011000,B00011000,B00011000,B00011000,B00011000,B00111100};
+        byte number_2[8] = {B00111100,B01111110,B01100110,B00000110,B00001100,B00011000,B00110000,B01111110};
+        byte number_3[8] = {B00000000,B00111100,B01000010,B00000010,B00011100,B00000010,B01000010,B00111100};
+        matrix.clearDisplay(0);
+
+        if (millis() < 2000) {
+            for (int i = 0; i < 8; i++)
+                matrix.setColumn(0, i, number_1[i]);
+        }
+        else if (millis() < 3000) {
+            for (int i = 0; i < 8; i++)
+                matrix.setColumn(0, i, number_2[i]);
+        }
+        else {
+            for (int i = 0; i < 8; i++)
+                matrix.setColumn(0, i, number_3[i]);
+        }
+
+        return;
+    }
 
     if (isHitFlag == FALSE && winFlag == FALSE) {
-        if (millis() >= 10000) {
+        if (millis() >= 30000) {
             lock.write(150);
             win();
             winFlag = TRUE;
